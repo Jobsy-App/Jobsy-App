@@ -1,17 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jobsy_v2/Widgets/bottom_nav_bar.dart';
 
-class JobScreen extends StatefulWidget {
+import '../Widgets/bottom_nav_bar.dart';
+
+class ProfileScreen extends StatefulWidget {
 
   @override
-  State<JobScreen> createState() => _JobScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _JobScreenState extends State<JobScreen> {
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,10 +21,10 @@ class _JobScreenState extends State<JobScreen> {
         ),
       ),
       child: Scaffold(
-        bottomNavigationBar: BottomNavigationBarForApp(indexNum: 0),
+        bottomNavigationBar: BottomNavigationBarForApp(indexNum: 3,),
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Home Page'),
+          title: const Text('Profile'),
           centerTitle: true,
           flexibleSpace: Container(
             decoration: BoxDecoration(
