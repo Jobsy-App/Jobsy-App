@@ -232,6 +232,23 @@ void _uploadTask() async
       }
 }
 
+void getMyData() async
+{
+  final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
+      .get();
+
+  setState(() {
+    name = userDoc.get('name');
+    userImage = userDoc.get('userImage');
+  });
+}
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getMyData();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
