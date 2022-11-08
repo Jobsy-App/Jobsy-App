@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               _selectedJobSeeKer(
                                 image: 'assets/images/login.png',
-                                name: 'JobSeeKer',
+                                name: 'JobSeeker',
                               ),
                               _selectedJobSeeKer(
                                 image: 'assets/images/login.png',

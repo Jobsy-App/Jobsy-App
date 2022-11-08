@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jobsy_v2/Jobs/jobs_screen.dart';
 import 'package:jobsy_v2/Services/global_methods.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class JobDetailsScreen extends StatefulWidget {
 
@@ -94,6 +96,28 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         SizedBox(height: 10,),
       ],
     );
+  }
+
+  applyForJob()
+  {
+    final Uri params = Uri(
+      scheme: 'mailto',
+      path: emailCompany,
+      query: 'subject=Applying for $jobTitle&body=Hello, please attach Resume CV file',
+    );
+    final url = params.toString();
+    launchUrlString(url);
+  }
+
+  void addNewApplicant() async
+  {
+    var docRef = FirebaseFirestore.instance.collection('jobs')
+        .doc(widget.jobID);
+
+    docRef.update({
+      'applicants': applicants + 1,
+    });
+    Navigator.pop(context);
   }
 
   @override
@@ -294,14 +318,161 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                           color: Colors.green,
                                         ),
                                       ),
+                                      const SizedBox(
+                                        width: 40,
+                                      ),
+                                      TextButton(
+                                        onPressed: (){
+                                          User? user = _auth.currentUser;
+                                          final _uid = user!.uid;
+                                          if(_uid == widget.uploadedBy)
+                                          {
+                                            try
+                                            {
+                                              FirebaseFirestore.instance
+                                                  .collection('jobs')
+                                                  .doc(widget.jobID)
+                                                  .update({'recruitment': false});
+                                            }catch (error)
+                                            {
+                                              GlobalMethod.showErrorDialog(
+                                                error: 'Action cannot be perform',
+                                                ctx: context,
+                                              );
+                                            }
+                                          }
+                                          else
+                                          {
+                                            GlobalMethod.showErrorDialog(
+                                              error: 'You cannot perform this action',
+                                              ctx: context,
+                                            );
+                                          }
+                                          getJobData();
+                                        },
+                                        child: const Text(
+                                          'OFF',
+                                          style: TextStyle(
+                                            fontStyle: FontStyle.italic,
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                      Opacity(
+                                        opacity: recruitment == false ? 1 : 0,
+                                        child: const Icon(
+                                          Icons.check_box,
+                                          color: Colors.red,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ],
                               ),
+                          dividerWidget(),
+               const            Text(
+                            'Job Description',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          Text(
+                            jobDescription == null
+                                ?
+                                ''
+                                :
+                                jobDescription!,
+                            textAlign: TextAlign.justify,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          dividerWidget(),
+
                         ],
                       ),
                     ),
                   ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Card(
+                  color: Colors.black54,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:  [
+                        const SizedBox(height: 10,),
+                        const Center(
+                          child: Text(
+                            'Actively Recruiting, Send your CV: ',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6,),
+                        Center(
+                          child: MaterialButton(
+                            onPressed: (){
+                              applyForJob();
+                            },
+                            color: Colors.blueAccent,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(13),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              child: Text(
+                                'Easy Apply Now',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        dividerWidget(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Uploaded on: ',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              postedDate == null
+                                  ?
+                                  ''
+                                  :
+                                  postedDate!,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                        dividerWidget(),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
