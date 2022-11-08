@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0.0,
         backgroundColor: Theme.of(context).accentColor,
         title: Text(
-          "Home",
+          "Welcome to Jobsy",
           style: TextStyle(
             fontSize: 23,
           ),
