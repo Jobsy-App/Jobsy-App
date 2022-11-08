@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:jobsy_v2/Jobs/Enterpreneur_Home_Page.dart';
 import 'package:jobsy_v2/LoginPage/login_screen.dart';
+import 'package:jobsy_v2/Widgets/Enterpreneur_bottom_nav_bar.dart';
 import 'package:jobsy_v2/Widgets/bottom_nav_bar.dart';
 import 'package:jobsy_v2/Home.dart';
 
@@ -35,7 +37,10 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
               onPressed: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Enterpreneur_Home_Page()));
               },
               child: Text(
                 name,
@@ -103,13 +108,13 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),
-                bottomLeft:Radius.circular(30),
-                bottomRight: Radius.circular(30), 
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
               )),
           child: ListView(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 30, left: 30 ,bottom: 30),
+                padding: const EdgeInsets.only(top: 30, left: 30, bottom: 30),
                 child: Text(
                   "",
                   style: TextStyle(
