@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jobsy_v2/Jobs/jobs_screen.dart';
 import 'package:jobsy_v2/Services/global_methods.dart';
+import 'package:jobsy_v2/Services/global_variables.dart';
+import 'package:jobsy_v2/Widgets/comments_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:uuid/uuid.dart';
 
 class JobDetailsScreen extends StatefulWidget {
 
@@ -24,6 +27,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+
+  final TextEditingController _commentController = TextEditingController();
+  bool _isCommenting = false;
   String? authorName;
   String? userImageUrl;
   String? jobCategory;
@@ -35,7 +41,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   String? postedDate;
   String? emailCompany = '';
   int applicants = 0;
-  //bool isDeadlineAvailable = false;
+  bool showComment = false;
 
   void getJobData() async
   {
@@ -107,6 +113,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     );
     final url = params.toString();
     launchUrlString(url);
+    addNewApplicant();
   }
 
   void addNewApplicant() async
@@ -469,6 +476,201 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           ],
                         ),
                         dividerWidget(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Card(
+                  color: Colors.black54,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(
+                            milliseconds: 500,
+                          ),
+                          child: _isCommenting
+                          ?
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  flex: 3,
+                                  child: TextField(
+                                    controller: _commentController,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                    maxLength: 200,
+                                    keyboardType: TextInputType.text,
+                                    maxLines: 6,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Theme.of(context).scaffoldBackgroundColor,
+                                      enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.white),
+                                      ),
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.pink),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                        child: MaterialButton(
+                                          onPressed: () async {
+                                            if(_commentController.text.length<7)
+                                              {
+                                                GlobalMethod.showErrorDialog(error: 'Comment cannot be less than 7 characters', ctx: context,);
+                                              }
+                                            else
+                                              {
+                                                final _generatedID = const Uuid().v4();
+                                                await FirebaseFirestore.instance.collection('jobs')
+                                                    .doc(widget.jobID)
+                                                .update({
+                                                  'jobComments':
+                                                      FieldValue.arrayUnion([{
+                                                        'userId': FirebaseAuth.instance.currentUser!.uid,
+                                                        'commentId': _generatedID,
+                                                        'name': name,
+                                                        'userImageUrl': userImage,
+                                                        'commentBody':_commentController.text,
+                                                        'time': Timestamp.now(),
+                                                      }]),
+                                                });
+                                                await Fluttertoast.showToast(
+                                                  msg: 'Your comment has been added',
+                                                  toastLength: Toast.LENGTH_LONG,
+                                                  backgroundColor: Colors.grey,
+                                                  fontSize: 18.0,
+                                                );
+                                                _commentController.clear();
+                                              }
+                                            setState(() {
+                                              showComment = true;
+                                            });
+                                          },
+                                          color: Colors.blueAccent,
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: const Text(
+                                            'Post',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: (){
+                                          setState(() {
+                                            _isCommenting = !_isCommenting;
+                                            showComment = false;
+                                          });
+                                        },
+                                        child: const Text('Cancel'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                              :
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: (){
+                                      setState(() {
+                                        _isCommenting = !_isCommenting;
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.add_comment,
+                                      color: Colors.blueAccent,
+                                      size: 40,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10,),
+                                  IconButton(
+                                    onPressed: (){
+                                      setState(() {
+                                        showComment = true;
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      color: Colors.blueAccent,
+                                      size: 40,
+                                    ),
+                                  ),
+                                ],
+                              )
+
+                        ),
+                        showComment == false
+                            ?
+                        Container()
+                            :
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: FutureBuilder<DocumentSnapshot>(
+                            future: FirebaseFirestore.instance
+                                .collection('jobs')
+                                .doc()
+                                .get(),
+                            builder: (context, snapshot)
+                              {
+                                if(snapshot.connectionState == ConnectionState.waiting)
+                                  {
+                                    return const Center(child: CircularProgressIndicator(),);
+                                  }
+                                else
+                                  {
+                                    if(snapshot.data == null)
+                                      {
+                                        const Center(child: Text('No Comment for this job'),);
+                                      }
+                                  }
+                                return ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index)
+                                  {
+                                    return CommentWidget(
+                                      commentId: snapshot.data!['jobComments'][index]['commentId'],
+                                      commenterId: snapshot.data!['jobComments'][index]['userId'],
+                                      commenterName: snapshot.data!['jobComments'][index]['name'],
+                                      commentBody: snapshot.data!['jobComments'][index]['commentBody'],
+                                      commenterImageUrl: snapshot.data!['jobComments'][index]['userImageUrl'],
+                                    );
+                                  },
+                                  separatorBuilder: (context, index)
+                                  {
+                                    return const Divider(
+                                      thickness: 1,
+                                      color: Colors.grey,
+                                    );
+                                  },
+                                  itemCount: snapshot.data!['jobComments'].length,
+                                );
+                              },
+                          ),
+                        ),
                       ],
                     ),
                   ),
