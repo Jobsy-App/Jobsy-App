@@ -15,11 +15,13 @@ class Persistent {
 class Persistent01 {
   static List<String> ProductCategoryList = [
       'Clothing & Apparel',
-      'Footwear & Shoesl',
+      'Footwear & Shoes',
       'Electronics & Gadgets',
       'Hand & Power Tools',
       'Furniture',
       'Sports Products',
+      'Handicrafts',
+      'Other',
 
   ];
 }

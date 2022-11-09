@@ -60,7 +60,7 @@ class _Enterpreneur_Upload_PageState extends State<Enterpreneur_Upload_Page> {
     _productDescriptionController.dispose();
 
    // _animationController.dispose();
-    super.dispose();
+    //super.dispose();
   }
 //--------------------------------------------------------------------
 //  @override
@@ -298,7 +298,7 @@ class _Enterpreneur_Upload_PageState extends State<Enterpreneur_Upload_Page> {
     final ProductId = const Uuid().v4();
     User? user = FirebaseAuth.instance.currentUser;
     final _uid = user!.uid;
-    final ref = FirebaseStorage.instance.ref().child('ProductImages').child(_uid + '.jpg');
+    final ref = FirebaseStorage.instance.ref().child('productImage').child(ProductId + '.jpg');
               await ref.putFile(imageFile!);
               imageUrl = await ref.getDownloadURL();
     final isValid = _formKey.currentState!.validate();
@@ -322,7 +322,7 @@ class _Enterpreneur_Upload_PageState extends State<Enterpreneur_Upload_Page> {
       });
       try {
         await FirebaseFirestore.instance
-            .collection('Product')
+            .collection('Products')
             .doc(ProductId)
             .set({
           'ProductId': ProductId,
@@ -336,8 +336,8 @@ class _Enterpreneur_Upload_PageState extends State<Enterpreneur_Upload_Page> {
           'ProductDescription': _productDescriptionController.text,
           'recruitment': true,
           'createdAt': Timestamp.now(),
-          'name': name,
-          'userImage': imageUrl,
+          // 'name': user.name,
+          'productImage': imageUrl,
           'applicants': 0,
         });
         await Fluttertoast.showToast(
@@ -351,6 +351,7 @@ class _Enterpreneur_Upload_PageState extends State<Enterpreneur_Upload_Page> {
         _SellerNameController.clear();
         _ContactNumberController.clear();
         _productDescriptionController.clear();
+        
         setState(() {
           _ProductCategoryController.text = 'Choose Product Category';
         });
@@ -368,6 +369,22 @@ class _Enterpreneur_Upload_PageState extends State<Enterpreneur_Upload_Page> {
       print('Its not valid');
     }
   }
+//   void getMyData() async
+// {
+//   final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
+//       .get();
+
+//   setState(() {
+//     name = userDoc.get('name');
+//     userImage = userDoc.get('userImage');
+//   });
+// }
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//     getMyData();
+//   }
 
   @override
   Widget build(BuildContext context) {

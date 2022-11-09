@@ -1,67 +1,73 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jobsy_v2/Jobs/jobs_screen.dart';
+import 'package:jobsy_v2/Jobs/Enterpreneur_Home_Page.dart';
 import 'package:jobsy_v2/Services/global_methods.dart';
 
-class JobDetailsScreen extends StatefulWidget {
-  final String uploadedBy;
-  final String jobID;
+class productDetailsScreen extends StatefulWidget {
+  final String ProductuploadedBy;
+  final String ProductId;
 
-  const JobDetailsScreen({
-    required this.uploadedBy,
-    required this.jobID,
+  const productDetailsScreen({
+    required this.ProductuploadedBy,
+    required this.ProductId,
   });
 
   @override
-  State<JobDetailsScreen> createState() => _JobDetailsScreenState();
+  State<productDetailsScreen> createState() => _productDetailsScreenState();
 }
 
-class _JobDetailsScreenState extends State<JobDetailsScreen> {
+class _productDetailsScreenState extends State<productDetailsScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String? authorName;
   String? userImageUrl;
-  String? jobCategory;
-  String? jobDescription;
-  String? jobTitle;
-  String? companyName;
+  String? ProcuctCategory;
+  String? ProductDescription;
+  String? ProductName;
+  String? SellerName;
+  String? ContactNumber;
+  String? UnitPrice;
   bool? recruitment;
   Timestamp? postedDateTimeStamp;
   String? postedDate;
-  String? emailCompany = '';
+  String? emailSeller = '';
   int applicants = 0;
   //bool isDeadlineAvailable = false;
 
-  void getJobData() async {
-    final DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.uploadedBy)
-        .get();
+  void getproductData() async {
+    // final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+    //     .collection('users')
+    //     .doc(widget.ProductuploadedBy)
+    //     .get();
 
-    if (userDoc == null) {
-      return;
-    } else {
-      setState(() {
-        authorName = userDoc.get('name');
-        userImageUrl = userDoc.get('userImage');
-      });
-    }
-    final DocumentSnapshot jobDatabase = await FirebaseFirestore.instance
-        .collection('jobs')
-        .doc(widget.jobID)
+    // if (userDoc == null) {
+    //   return;
+    // } else {
+    //   setState(() {
+    //     //authorName = userDoc.get('name');
+    //     userImageUrl = userDoc.get('userImage');
+    //   });
+    // }
+    final DocumentSnapshot productDatabase = await FirebaseFirestore.instance
+        .collection('Products')
+        .doc(widget.ProductId)
         .get();
-    if (jobDatabase == null) {
+    if (productDatabase == null) {
       return;
     } else {
       setState(() {
-        jobTitle = jobDatabase.get('jobTitle');
-        jobDescription = jobDatabase.get('jobDescription');
-        recruitment = jobDatabase.get('recruitment');
-        emailCompany = jobDatabase.get('email');
-        companyName = jobDatabase.get('companyName');
-        applicants = jobDatabase.get('applicants');
-        postedDateTimeStamp = jobDatabase.get('createdAt');
+        ProcuctCategory = productDatabase.get('ProcuctCategory');
+        ProductDescription = productDatabase.get('ProductDescription');
+        recruitment = productDatabase.get('recruitment');
+        ProductName = productDatabase.get('ProductName');
+        SellerName = productDatabase.get('SellerName');
+        ContactNumber = productDatabase.get('ContactNumber');
+        UnitPrice = productDatabase.get('UnitPrice');
+        emailSeller = productDatabase.get('email');
+        applicants = productDatabase.get('applicants');
+        postedDateTimeStamp = productDatabase.get('createdAt');
+        userImageUrl = productDatabase.get('productImage');
         var postDate = postedDateTimeStamp!.toDate();
         postedDate = '${postDate.year}-${postDate.month}-${postDate.day}';
       });
@@ -72,7 +78,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getJobData();
+    getproductData();
   }
 
   Widget dividerWidget() {
@@ -127,7 +133,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               ),
               onPressed: () {
                 Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => JobScreen()));
+                    MaterialPageRoute(builder: (context) => Enterpreneur_Home_Page()));
               }),
         ),
         body: SingleChildScrollView(
@@ -146,7 +152,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 4),
                           child: Text(
-                            jobTitle == null ? '' : jobTitle!,
+                            ProductName == null ? '' : ProductName!,
                             maxLines: 3,
                             style: const TextStyle(
                               color: Colors.white,
@@ -173,7 +179,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                 image: DecorationImage(
                                   image: NetworkImage(
                                     userImageUrl == null
-                                        ? 'https://w7.pngwing.com/pngs/754/2/png-transparent-samsung-galaxy-a8-a8-user-login-telephone-avatar-pawn-blue-angle-sphere-thumbnail.png'
+                                        ? ''
                                         : userImageUrl!,
                                   ),
                                   fit: BoxFit.fill,
@@ -186,7 +192,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    authorName == null ? '' : authorName!,
+                                    SellerName == null ? '' : SellerName!,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -197,9 +203,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                     height: 5,
                                   ),
                                   Text(
-                                    companyName == null ? '' : companyName!,
-                                    //companyName!,
-                                    style: const TextStyle(color: Colors.grey),
+                                    UnitPrice == null ? '' : UnitPrice!,
+                                   // UnitPrice!,
+                                    style: const TextStyle(
+                                       fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.grey),
                                   ),
                                 ],
                               ),
@@ -234,7 +243,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                             ),
                           ],
                         ),
-                        FirebaseAuth.instance.currentUser!.uid != widget.uploadedBy
+                        FirebaseAuth.instance.currentUser!.uid != widget.ProductuploadedBy
                             ? Container()
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,11 +267,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                         onPressed: () {
                                           User? user = _auth.currentUser;
                                           final _uid = user!.uid;
-                                          if (_uid == widget.uploadedBy) {
+                                          if (_uid == widget.ProductuploadedBy) {
                                             try {
                                               FirebaseFirestore.instance
-                                                  .collection('jobs')
-                                                  .doc(widget.jobID)
+                                                  .collection('Products')
+                                                  .doc(widget.ProductId)
                                                   .update(
                                                       {'recruitment': true});
                                             } catch (error) {
@@ -279,7 +288,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                               ctx: context,
                                             );
                                           }
-                                          getJobData();
+                                          getproductData();
                                         },
                                         child: const Text(
                                           'ON',
