@@ -232,6 +232,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                     ),
                                     const SizedBox(height: 5,),
                                     Text(
+                                      companyName == null
+                                          ?
+                                      '':
                                       companyName!,
                                       style: const TextStyle(color: Colors.grey),
                                     ),
