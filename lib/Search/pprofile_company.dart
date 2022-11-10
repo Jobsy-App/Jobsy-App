@@ -4,19 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jobsy_v2/user_state.dart';
 
-import '../Widgets/bottom_nav_bar.dart';
+import '../Widgets/bnav_bar.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen1 extends StatefulWidget {
 
   final String userID;
 
-  const ProfileScreen({required this.userID});
+  const ProfileScreen1({required this.userID});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreen1> createState() => _ProfileScreen1State();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreen1State extends State<ProfileScreen1> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -100,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       child: Scaffold(
-        bottomNavigationBar: BottomNavigationBarForApp(indexNum: 3,),
+        bottomNavigationBar: BNavigationBarForApp(indexNum: 3,),
         backgroundColor: Colors.transparent,
         body: Center(
           child: _isLoading

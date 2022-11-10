@@ -7,15 +7,15 @@ import 'package:jobsy_v2/Services/global_methods.dart';
 import 'package:uuid/uuid.dart';
 
 import '../Services/global_variables.dart';
-import '../Widgets/bottom_nav_bar.dart';
+import '../Widgets/bnav_bar.dart';
 
-class UploadJobNow extends StatefulWidget {
+class pUploadJobNow extends StatefulWidget {
 
   @override
-  State<UploadJobNow> createState() => _UploadJobNowState();
+  State<pUploadJobNow> createState() => _pUploadJobNowState();
 }
 
-class _UploadJobNowState extends State<UploadJobNow> {
+class _pUploadJobNowState extends State<pUploadJobNow> {
 
   final TextEditingController _jobCategoryController = TextEditingController(text: 'Select Job Category');
   final TextEditingController _jobTitleController = TextEditingController();
@@ -245,7 +245,7 @@ void _uploadTask() async
         ),
       ),
       child: Scaffold(
-        bottomNavigationBar: BottomNavigationBarForApp(indexNum: 2,),
+        bottomNavigationBar: BNavigationBarForApp(indexNum: 2,),
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: const Text('Upload Job Now'),

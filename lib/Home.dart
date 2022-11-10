@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:jobsy_v2/Jobs/Enterpreneur_Home_Page.dart';
+import 'package:jobsy_v2/Jobs/jobs_screen%20copy.dart';
 import 'package:jobsy_v2/LoginPage/login_screen.dart';
 import 'package:jobsy_v2/Widgets/Enterpreneur_bottom_nav_bar.dart';
 import 'package:jobsy_v2/Widgets/bottom_nav_bar.dart';
@@ -39,8 +40,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            Enterpreneur_Home_Page()));
+                        builder: (context) => Enterpreneur_Home_Page()));
               },
               child: Text(
                 name,
@@ -73,6 +73,39 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
               onPressed: () {
                 Navigator.canPop(context) ? Navigator.pop(context) : null;
+              },
+              child: Text(
+                name,
+                style: TextStyle(fontSize: 17),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _selectedProvider({
+    required String image,
+    required String name,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(color: Colors.grey, width: 2)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            height: 60,
+            decoration:
+                BoxDecoration(image: DecorationImage(image: AssetImage(image))),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => JobScreen1()));
               },
               child: Text(
                 name,
@@ -157,15 +190,15 @@ class _HomePageState extends State<HomePage> {
                               ),
                               _selectedJobSeeKer(
                                 image: 'assets/images/login.png',
-                                name: 'Orgalizi2',
+                                name: 'Buyer',
                               ),
                               _selectedJobSeeKer(
                                 image: 'assets/images/login.png',
-                                name: 'JobSeeKer',
+                                name: 'JobSeeker',
                               ),
-                              _selectedJobSeeKer(
+                              _selectedProvider(
                                 image: 'assets/images/login.png',
-                                name: 'Orgalizi4',
+                                name: 'Job Provider',
                               ),
                             ],
                           ),

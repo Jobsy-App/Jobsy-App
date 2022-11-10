@@ -1,16 +1,19 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jobsy_v2/Jobs/Enterpreneur_Home_Page.dart';
-import 'package:jobsy_v2/Jobs/Enterpreneur_upload.dart';
-import 'package:jobsy_v2/Search/Eprofile.dart';
-import 'package:jobsy_v2/Search/Esearch_companies.dart';
+import 'package:jobsy_v2/Jobs/jobs_screen%20copy.dart';
+import 'package:jobsy_v2/Jobs/jobs_screen.dart';
+import 'package:jobsy_v2/Jobs/pupload_job.dart';
+import 'package:jobsy_v2/Jobs/upload_job.dart';
+import 'package:jobsy_v2/Search/pprofile_company.dart';
+import 'package:jobsy_v2/Search/profile_company.dart';
+import 'package:jobsy_v2/Search/search_companies.dart';
 import 'package:jobsy_v2/user_state.dart';
 
-class Enterpreneur_BottomNavigationBarForApp extends StatelessWidget {
+class BNavigationBarForApp extends StatelessWidget {
   int indexNum = 0;
 
-  Enterpreneur_BottomNavigationBarForApp({required this.indexNum});
+  BNavigationBarForApp({required this.indexNum});
 
   void _logout(context) {
     final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -49,7 +52,7 @@ class Enterpreneur_BottomNavigationBarForApp extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () {
-                  //Navigator.canPop(context) ? Navigator.pop(context):null;
+                  Navigator.canPop(context) ? Navigator.pop(context) : null;
                 },
                 child: const Text(
                   'No',
@@ -59,8 +62,7 @@ class Enterpreneur_BottomNavigationBarForApp extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   _auth.signOut();
-                  //   Navigator.canPop(context) ? Navigator.canPop(context) : null;
-
+                  Navigator.canPop(context) ? Navigator.canPop(context) : null;
                   Navigator.pushReplacement(
                       context, MaterialPageRoute(builder: (_) => UserState()));
                 },
@@ -83,7 +85,6 @@ class Enterpreneur_BottomNavigationBarForApp extends StatelessWidget {
       height: 50,
       index: indexNum,
       items: const [
-        
         Icon(
           Icons.home,
           size: 25,
@@ -115,51 +116,27 @@ class Enterpreneur_BottomNavigationBarForApp extends StatelessWidget {
       ),
       animationCurve: Curves.bounceInOut,
       onTap: (index) {
-       
-        {
-          if (index == 0) {
-
-             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Enterpreneur_Home_Page()));
-          
-            // Navigator.pushReplacement(context,
-            //     MaterialPageRoute(builder: (_) => Enterpreneur_Home_Page()));
-          } else if (index == 1) {
-          
-            // Navigator.pushReplacement(context,
-            //     MaterialPageRoute(builder: (_) => AllEWorkersScreen()));
-             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            AllEWorkersScreen()));
-          } else if (index == 2) {
-           
-            // Navigator.pushReplacement(context,
-            //     MaterialPageRoute(builder: (_) => Enterpreneur_Upload_Page()));
-             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Enterpreneur_Upload_Page()));
-          } else if (index == 3) {
-            final FirebaseAuth _auth = FirebaseAuth.instance;
-            final User? user = _auth.currentUser;
-            final String uid = user!.uid;
-            // Navigator.pushReplacement(
-            //     context, MaterialPageRoute(builder: (_) => EProfile()));
-             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            EProfile(userID: uid,)));
-          } else if (index == 4) {
-           
-            _logout(context);
-          }
+        if (index == 0) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => JobScreen1()));
+        } else if (index == 1) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => AllWorkersScreen()));
+        } else if (index == 2) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => pUploadJobNow()));
+        } else if (index == 3) {
+          final FirebaseAuth _auth = FirebaseAuth.instance;
+          final User? user = _auth.currentUser;
+          final String uid = user!.uid;
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => ProfileScreen1(
+                        userID: uid,
+                      )));
+        } else if (index == 4) {
+          _logout(context);
         }
       },
     );

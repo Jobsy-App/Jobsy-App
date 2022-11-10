@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:jobsy_v2/Jobs/jobs_screen.dart';
 import 'package:jobsy_v2/Widgets/job_widget.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen1 extends StatefulWidget {
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<SearchScreen1> createState() => _SearchScreen1State();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreen1State extends State<SearchScreen1> {
 
   final TextEditingController _searchQueryController = TextEditingController();
   String searchQuery = 'Search query';
