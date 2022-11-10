@@ -1,21 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jobsy_v2/Search/search_job.dart';
-import 'package:jobsy_v2/Widgets/bottom_nav_bar.dart';
-import 'package:jobsy_v2/Widgets/job_widget.dart';
+import 'package:jobsy/Search/search_product.dart';
+import 'package:jobsy/Widgets/bottom_nav_bar.dart';
+import 'package:jobsy/Widgets/product_req_widget.dart';
 
 import '../Persistent/persistent.dart';
 
-class JobScreen extends StatefulWidget {
+
+class ProductScreen extends StatefulWidget {
+
 
   @override
-  State<JobScreen> createState() => _JobScreenState();
+  State<ProductScreen> createState() => _ProductScreenState();
 }
 
-class _JobScreenState extends State<JobScreen> {
+class _ProductScreenState extends State<ProductScreen> {
 
-  String? jobCategoryFilter;
+  String? productCategoryFilter;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -28,25 +30,25 @@ class _JobScreenState extends State<JobScreen> {
           return AlertDialog(
             backgroundColor: Colors.black54,
             title: const Text(
-              'Job Category',
+              'Product Category',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, color: Colors.white),
+              style: TextStyle(fontSize: 15, color: Colors.white),
             ),
             content: Container(
               width: size.width * 0.9,
               child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: Persistent.jobCategoryList.length,
+                  itemCount: Persistent.productCategoryList.length,
                   itemBuilder: (ctx, index)
                   {
                     return InkWell(
                       onTap: (){
                         setState(() {
-                          jobCategoryFilter = Persistent.jobCategoryList[index];
+                          productCategoryFilter = Persistent.productCategoryList[index];
                         });
                         Navigator.canPop(context) ? Navigator.pop(context) : null;
                         print(
-                          'jobCategoryList[index], ${Persistent.jobCategoryList[index]}'
+                          'productCategoryList[index], ${Persistent.productCategoryList[index]}'
                         );
                       },
                       child: Row(
@@ -58,7 +60,7 @@ class _JobScreenState extends State<JobScreen> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              Persistent.jobCategoryList[index],
+                              Persistent.productCategoryList[index],
                               style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 16,
@@ -67,13 +69,15 @@ class _JobScreenState extends State<JobScreen> {
                           ),
                         ],
                       ),
+
                     );
                   }
               ),
             ),
             actions: [
               TextButton(
-                onPressed: (){
+                onPressed: ()
+                {
                   Navigator.canPop(context) ? Navigator.pop(context) : null;
                 },
                 child: const Text('Close', style: TextStyle(
@@ -86,23 +90,16 @@ class _JobScreenState extends State<JobScreen> {
                 onPressed: ()
                 {
                   setState(() {
-                    jobCategoryFilter = null;
+                    productCategoryFilter = null;
                   });
                   Navigator.canPop(context) ? Navigator.pop(context) : null;
                 },
-                child: const Text('Cancel Filter',style: TextStyle(color: Colors.white),),
+                child: const Text('Cancel Filter', style: TextStyle(color: Colors.white),),
               ),
             ],
           );
         }
     );
-  }
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    Persistent persistentObject = Persistent();
-    persistentObject.getMyData();
   }
 
   @override
@@ -123,24 +120,26 @@ class _JobScreenState extends State<JobScreen> {
         appBar: AppBar(
           flexibleSpace: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blueAccent.shade400, Colors.blueAccent.shade400],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
-              ),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.blueAccent.shade400,
+                    Colors.blueAccent.shade400],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: const [0.2, 0.9],
+                )
             ),
           ),
           automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: const Icon(Icons.filter_list_rounded, color: Colors.white,),
+            icon: const Icon(Icons.filter_list_rounded, color: Colors.black,),
             onPressed: (){
               _showTaskCategoriesDialog(size: size);
             },
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.search_outlined, color: Colors.white,),
+              icon: const Icon(Icons.search_outlined, color: Colors.black,),
               onPressed: ()
               {
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => SearchScreen()));
@@ -149,8 +148,10 @@ class _JobScreenState extends State<JobScreen> {
           ],
         ),
         body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: FirebaseFirestore.instance.collection('jobs').where('jobCategory',isEqualTo: jobCategoryFilter)
-              .where('recruitment',isEqualTo: true)
+          stream: FirebaseFirestore.instance
+              .collection('productRequests')
+              .where('productCategory', isEqualTo: productCategoryFilter)
+              .where('recruitment', isEqualTo: true)
               .orderBy('createdAt', descending: false)
               .snapshots(),
           builder: (context, AsyncSnapshot snapshot)
@@ -162,42 +163,46 @@ class _JobScreenState extends State<JobScreen> {
             else if(snapshot.connectionState == ConnectionState.active)
               {
                 if(snapshot.data?.docs.isNotEmpty == true)
-                  {
-                    return ListView.builder(
-                      itemCount: snapshot.data?.docs.length,
-                      itemBuilder: (BuildContext context, int index)
-                        {
-                          return JobWidget(
-                            jobTitle: snapshot.data?.docs[index]['jobTitle'],
-                            jobDescription: snapshot.data?.docs[index]['jobDescription'],
-                            jobId: snapshot.data?.docs[index]['jobId'],
-                            uploadedBy: snapshot.data?.docs[index]['uploadedBy'],
-                            userImage: snapshot.data?.docs[index]['userImage'],
-                            name: snapshot.data?.docs[index]['name'],
-                            recruitment: snapshot.data?.docs[index]['recruitment'],
-                            email: snapshot.data?.docs[index]['email'],
-                            companyName: snapshot.data?.docs[index]['companyName'],
-                          );
-                        }
-                    );
-                  }
-                else{
-                  return const Center(
-                    child: Text('There is no jobs'),
+                {
+                  return ListView.builder(
+                    itemCount: snapshot.data?.docs.length,
+                    itemBuilder: (BuildContext context, int index)
+                    {
+                      return ProductReqWidget(
+                        productCategory: snapshot.data?.docs[index]['productCategory'],
+                        productTitle: snapshot.data?.docs[index]['productTitle'],
+                        productDescription: snapshot.data?.docs[index]['productDescription'],
+                        productReqId: snapshot.data?.docs[index]['productReqId'],
+                        uploadedBy: snapshot.data?.docs[index]['uploadedBy'],
+                        productImage: snapshot.data?.docs[index]['productImage'],
+                        name: snapshot.data?.docs[index]['name'],
+                        recruitment: snapshot.data?.docs[index]['recruitment'],
+                        email: snapshot.data?.docs[index]['email'],
+                        location: snapshot.data?.docs[index]['location'],
+                      );
+                    }
                   );
                 }
+                else
+                  {
+                    return const Center(
+                      child: Text('There is no products requests'),
+                    );
+                  }
               }
             return const Center(
               child: Text(
                 'Something went wrong',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 30
-                ),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 30
+              ),
               ),
             );
           }
-        )
-      ),
-    );
+        ),
+
+        ),
+      );
+    //);
   }
 }
